@@ -1,0 +1,46 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: crystalball-cronjob
+  labels:
+    app: crystalball
+spec:
+  schedule: "@hourly"
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      parallelism: 3
+      completions: 1
+      template:
+        metadata:
+          labels:
+            app: crystalball
+        spec:
+          serviceAccountName: cb-sa
+          restartPolicy: OnFailure
+          containers:
+          - name: app
+            image: crystalball:latest
+            imagePullPolicy: IfNotPresent
+            env:
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: awscreds
+                  key: key_id
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: awscreds
+                  key: secret_key
+            - name: S3_BUCKET
+              value: "lskube-app-config"
+            - name: CONFIGMAP_PATH
+              value: "map.yml"
+            resources:
+              requests:
+                memory: "64Mi"
+                cpu: "250m"
+              limits:
+                memory: "128Mi"
+                cpu: "500m"

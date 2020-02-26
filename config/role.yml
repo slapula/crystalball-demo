@@ -1,0 +1,29 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+ name: cb-sa
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: Role
+metadata:
+  name: configmaps-access
+  namespace: default
+rules:
+  - apiGroups: ['*']
+    resources: ['configmaps']
+    verbs: ['get', 'create', 'update']
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: cb-sa-rolebinding
+  namespace: default
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: configmaps-access
+subjects:
+- namespace: default
+  kind: ServiceAccount
+  name: cb-sa
