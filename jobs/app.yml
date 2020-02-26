@@ -34,7 +34,7 @@ spec:
                   name: awscreds
                   key: secret_key
             - name: S3_BUCKET
-              value: "lskube-app-config"
+              value: "kube-configmap-bucket"
             - name: CONFIGMAP_PATH
               value: "map.yml"
             resources:
